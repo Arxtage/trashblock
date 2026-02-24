@@ -8,15 +8,7 @@ const emptyMsg = document.getElementById("emptyMsg");
 const unlockedList = document.getElementById("unlockedList");
 const unlockedEmpty = document.getElementById("unlockedEmpty");
 
-const removeModal = document.getElementById("removeModal");
-const removeDomainEl = document.getElementById("removeDomain");
-const removePhraseEl = document.getElementById("removePhrase");
-const removeInput = document.getElementById("removeInput");
-const removeFeedback = document.getElementById("removeFeedback");
-const removeCancel = document.getElementById("removeCancel");
-
 let countdownInterval = null;
-let pendingRemoveDomain = null;
 
 // Strip a user-entered URL down to a bare domain
 function cleanDomain(input) {
@@ -125,12 +117,34 @@ function formatCountdown(ms) {
 
 // --- Actions ---
 
+// Normalize smart/curly quotes to straight ASCII equivalents
+function normalizeQuotes(str) {
+  return str
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")   // curly single quotes
+    .replace(/[\u201C\u201D\u201E\u201F]/g, '"')    // curly double quotes
+    .replace(/[\u2013\u2014]/g, "-");                // en/em dashes
+}
+
 savePhrase.addEventListener("click", () => {
-  const phrase = phraseInput.value.trim();
-  if (!phrase) return;
-  chrome.storage.local.set({ unlockPhrase: phrase }, () => {
-    phraseStatus.textContent = "Saved!";
-    setTimeout(() => { phraseStatus.textContent = ""; }, 2000);
+  const newPhrase = normalizeQuotes(phraseInput.value.trim());
+  if (!newPhrase) return;
+
+  // Check if there's an existing phrase that requires confirmation
+  chrome.storage.local.get("unlockPhrase", (data) => {
+    const current = data.unlockPhrase || "";
+    if (!current || current === newPhrase) {
+      // No existing phrase or unchanged — save directly
+      chrome.storage.local.set({ unlockPhrase: newPhrase }, () => {
+        phraseStatus.textContent = "Saved!";
+        setTimeout(() => { phraseStatus.textContent = ""; }, 2000);
+      });
+    } else {
+      // Existing phrase differs — require typing challenge
+      chrome.storage.local.set({ pendingPhrase: newPhrase }, () => {
+        const url = chrome.runtime.getURL("blocked.html") + "?action=changePhrase";
+        chrome.tabs.create({ url });
+      });
+    }
   });
 });
 
@@ -157,70 +171,14 @@ function addSite() {
   });
 }
 
-// --- Remove site with typing challenge ---
+// --- Remove site with full-page typing challenge ---
 
 function promptRemoveSite(domain) {
-  pendingRemoveDomain = domain;
-  removeDomainEl.textContent = domain;
-  removeInput.value = "";
-  removeFeedback.innerHTML = "";
-
-  chrome.storage.local.get("unlockPhrase", (data) => {
-    const phrase = data.unlockPhrase || "";
-    removePhraseEl.textContent = phrase;
-    renderRemoveFeedback(phrase);
-    removeModal.classList.add("visible");
-    removeInput.focus();
-  });
+  const url = chrome.runtime.getURL("blocked.html")
+    + "?site=" + encodeURIComponent(domain)
+    + "&action=remove";
+  chrome.tabs.create({ url });
 }
-
-function closeRemoveModal() {
-  removeModal.classList.remove("visible");
-  pendingRemoveDomain = null;
-  removeInput.value = "";
-  removeFeedback.innerHTML = "";
-}
-
-function renderRemoveFeedback(phrase) {
-  const typed = removeInput.value;
-  let html = "";
-  for (let i = 0; i < phrase.length; i++) {
-    if (i < typed.length) {
-      if (typed[i] === phrase[i]) {
-        html += `<span class="correct">${escapeHtml(phrase[i])}</span>`;
-      } else {
-        html += `<span class="incorrect">${escapeHtml(phrase[i])}</span>`;
-      }
-    } else {
-      html += `<span class="remaining">${escapeHtml(phrase[i])}</span>`;
-    }
-  }
-  removeFeedback.innerHTML = html;
-}
-
-function escapeHtml(char) {
-  const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-  return map[char] || char;
-}
-
-removeInput.addEventListener("paste", (e) => e.preventDefault());
-removeInput.addEventListener("drop", (e) => e.preventDefault());
-removeInput.addEventListener("contextmenu", (e) => e.preventDefault());
-
-removeInput.addEventListener("input", () => {
-  chrome.storage.local.get("unlockPhrase", (data) => {
-    const phrase = data.unlockPhrase || "";
-    renderRemoveFeedback(phrase);
-
-    if (removeInput.value === phrase && pendingRemoveDomain) {
-      const domain = pendingRemoveDomain;
-      closeRemoveModal();
-      removeSite(domain);
-    }
-  });
-});
-
-removeCancel.addEventListener("click", closeRemoveModal);
 
 function removeSite(domain) {
   chrome.storage.local.get(["blockedSites", "unlockedSites"], (data) => {

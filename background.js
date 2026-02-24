@@ -89,9 +89,36 @@ chrome.runtime.onStartup.addListener(async () => {
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "unlock") {
     handleUnlock(message.domain).then(() => sendResponse({ ok: true }));
-    return true; // keep channel open for async response
+    return true;
+  }
+  if (message.type === "removeSite") {
+    handleRemoveSite(message.domain).then(() => sendResponse({ ok: true }));
+    return true;
+  }
+  if (message.type === "applyPendingPhrase") {
+    handleApplyPendingPhrase().then(() => sendResponse({ ok: true }));
+    return true;
   }
 });
+
+async function handleApplyPendingPhrase() {
+  const data = await chrome.storage.local.get("pendingPhrase");
+  if (data.pendingPhrase) {
+    await chrome.storage.local.set({ unlockPhrase: data.pendingPhrase });
+    await chrome.storage.local.remove("pendingPhrase");
+  }
+}
+
+async function handleRemoveSite(domain) {
+  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
+  const sites = (data.blockedSites || []).filter((d) => d !== domain);
+  const unlockedSites = data.unlockedSites || {};
+  delete unlockedSites[domain];
+
+  await chrome.storage.local.set({ blockedSites: sites, unlockedSites });
+  await chrome.alarms.clear(`reblock-${domain}`);
+  await syncRules(sites, unlockedSites);
+}
 
 async function handleUnlock(domain) {
   const expiry = Date.now() + UNLOCK_DURATION_MS;
