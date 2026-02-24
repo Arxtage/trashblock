@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TrashBlock</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <h1>TrashBlock</h1>
+
+    <section>
+      <h2>Unlock Phrase</h2>
+      <div class="row">
+        <input type="text" id="phraseInput" placeholder="Type your unlock phrase...">
+        <button id="savePhrase">Save</button>
+      </div>
+      <p class="hint" id="phraseStatus"></p>
+    </section>
+
+    <section>
+      <h2>Blocked Sites</h2>
+      <div class="row">
+        <input type="text" id="siteInput" placeholder="example.com">
+        <button id="addSite">Add</button>
+      </div>
+      <ul id="siteList"></ul>
+      <p class="empty" id="emptyMsg">No sites blocked yet.</p>
+    </section>
+
+    <section>
+      <h2>Temporarily Unlocked</h2>
+      <ul id="unlockedList"></ul>
+      <p class="empty" id="unlockedEmpty">No sites currently unlocked.</p>
+    </section>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
