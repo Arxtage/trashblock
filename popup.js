@@ -8,7 +8,15 @@ const emptyMsg = document.getElementById("emptyMsg");
 const unlockedList = document.getElementById("unlockedList");
 const unlockedEmpty = document.getElementById("unlockedEmpty");
 
+const removeModal = document.getElementById("removeModal");
+const removeDomainEl = document.getElementById("removeDomain");
+const removePhraseEl = document.getElementById("removePhrase");
+const removeInput = document.getElementById("removeInput");
+const removeFeedback = document.getElementById("removeFeedback");
+const removeCancel = document.getElementById("removeCancel");
+
 let countdownInterval = null;
+let pendingRemoveDomain = null;
 
 // Strip a user-entered URL down to a bare domain
 function cleanDomain(input) {
@@ -46,7 +54,7 @@ function renderBlockedSites(sites) {
 
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "Remove";
-    removeBtn.addEventListener("click", () => removeSite(domain));
+    removeBtn.addEventListener("click", () => promptRemoveSite(domain));
 
     li.appendChild(name);
     li.appendChild(removeBtn);
@@ -149,6 +157,71 @@ function addSite() {
   });
 }
 
+// --- Remove site with typing challenge ---
+
+function promptRemoveSite(domain) {
+  pendingRemoveDomain = domain;
+  removeDomainEl.textContent = domain;
+  removeInput.value = "";
+  removeFeedback.innerHTML = "";
+
+  chrome.storage.local.get("unlockPhrase", (data) => {
+    const phrase = data.unlockPhrase || "";
+    removePhraseEl.textContent = phrase;
+    renderRemoveFeedback(phrase);
+    removeModal.classList.add("visible");
+    removeInput.focus();
+  });
+}
+
+function closeRemoveModal() {
+  removeModal.classList.remove("visible");
+  pendingRemoveDomain = null;
+  removeInput.value = "";
+  removeFeedback.innerHTML = "";
+}
+
+function renderRemoveFeedback(phrase) {
+  const typed = removeInput.value;
+  let html = "";
+  for (let i = 0; i < phrase.length; i++) {
+    if (i < typed.length) {
+      if (typed[i] === phrase[i]) {
+        html += `<span class="correct">${escapeHtml(phrase[i])}</span>`;
+      } else {
+        html += `<span class="incorrect">${escapeHtml(phrase[i])}</span>`;
+      }
+    } else {
+      html += `<span class="remaining">${escapeHtml(phrase[i])}</span>`;
+    }
+  }
+  removeFeedback.innerHTML = html;
+}
+
+function escapeHtml(char) {
+  const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  return map[char] || char;
+}
+
+removeInput.addEventListener("paste", (e) => e.preventDefault());
+removeInput.addEventListener("drop", (e) => e.preventDefault());
+removeInput.addEventListener("contextmenu", (e) => e.preventDefault());
+
+removeInput.addEventListener("input", () => {
+  chrome.storage.local.get("unlockPhrase", (data) => {
+    const phrase = data.unlockPhrase || "";
+    renderRemoveFeedback(phrase);
+
+    if (removeInput.value === phrase && pendingRemoveDomain) {
+      const domain = pendingRemoveDomain;
+      closeRemoveModal();
+      removeSite(domain);
+    }
+  });
+});
+
+removeCancel.addEventListener("click", closeRemoveModal);
+
 function removeSite(domain) {
   chrome.storage.local.get(["blockedSites", "unlockedSites"], (data) => {
     const sites = (data.blockedSites || []).filter((d) => d !== domain);
@@ -156,7 +229,6 @@ function removeSite(domain) {
     delete unlockedSites[domain];
 
     chrome.storage.local.set({ blockedSites: sites, unlockedSites }, () => {
-      // Cancel any pending re-block alarm for this site
       chrome.alarms.clear(`reblock-${domain}`);
       loadState();
     });

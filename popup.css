@@ -123,3 +123,98 @@ ul li button:hover {
   margin-top: 8px;
   font-style: italic;
 }
+
+/* Remove confirmation modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal {
+  background: #16213e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  width: 320px;
+  text-align: center;
+}
+
+.modal h3 {
+  font-size: 1rem;
+  color: #e94560;
+  margin-bottom: 12px;
+}
+
+.modal-phrase {
+  background: #1a1a2e;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 12px;
+  user-select: none;
+  -webkit-user-select: none;
+  color: #ccc;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.modal input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  background: #0f3460;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #e0e0e0;
+  outline: none;
+}
+
+.modal input:focus {
+  border-color: #e94560;
+}
+
+.modal-feedback {
+  margin-top: 8px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 12px;
+  min-height: 1.5em;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.modal-feedback .correct {
+  color: #4ecca3;
+}
+
+.modal-feedback .incorrect {
+  color: #e94560;
+  text-decoration: underline;
+}
+
+.modal-feedback .remaining {
+  color: #555;
+}
+
+.modal-buttons {
+  margin-top: 12px;
+}
+
+.cancel-btn {
+  background: #333;
+  padding: 6px 16px;
+}
+
+.cancel-btn:hover {
+  background: #444;
+}

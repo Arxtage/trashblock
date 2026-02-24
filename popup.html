@@ -34,6 +34,19 @@
       <p class="empty" id="unlockedEmpty">No sites currently unlocked.</p>
     </section>
   </div>
+
+  <div class="modal-overlay" id="removeModal">
+    <div class="modal">
+      <h3>Remove <span id="removeDomain"></span>?</h3>
+      <p class="modal-phrase" id="removePhrase"></p>
+      <input type="text" id="removeInput" autocomplete="off" spellcheck="false" placeholder="Type the phrase to confirm...">
+      <div class="modal-feedback" id="removeFeedback"></div>
+      <div class="modal-buttons">
+        <button class="cancel-btn" id="removeCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>
