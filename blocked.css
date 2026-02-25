@@ -52,6 +52,7 @@ h1 {
   margin-bottom: 24px;
   color: #ccc;
   line-height: 1.6;
+  text-align: justify;
 }
 
 #input {
@@ -79,6 +80,7 @@ h1 {
   min-height: 1.6em;
   line-height: 1.6;
   word-break: break-all;
+  text-align: justify;
 }
 
 .feedback .correct {
