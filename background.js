@@ -26,14 +26,22 @@ function buildRule(domain) {
       redirect: { url: blockedUrl },
     },
     condition: {
-      urlFilter: "||" + domain,
+      requestDomains: [domain],
       resourceTypes: ["main_frame"],
     },
   };
 }
 
 // Full-replace all dynamic rules to match current blocked/unlocked state
-async function syncRules(blockedSites, unlockedSites) {
+// Always cleans expired unlocks before syncing
+async function syncRules() {
+  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
+  const blockedSites = data.blockedSites || [];
+  const unlockedSites = cleanExpiredUnlocks(data.unlockedSites || {});
+
+  // Persist cleaned unlocks
+  await chrome.storage.local.set({ unlockedSites });
+
   const now = Date.now();
 
   // Remove all existing dynamic rules first
@@ -72,16 +80,11 @@ chrome.runtime.onInstalled.addListener(async () => {
   const data = await chrome.storage.local.get(Object.keys(DEFAULTS));
   const merged = { ...DEFAULTS, ...data };
   await chrome.storage.local.set(merged);
-  merged.unlockedSites = cleanExpiredUnlocks(merged.unlockedSites);
-  await chrome.storage.local.set({ unlockedSites: merged.unlockedSites });
-  await syncRules(merged.blockedSites, merged.unlockedSites);
+  await syncRules();
 });
 
 chrome.runtime.onStartup.addListener(async () => {
-  const data = await chrome.storage.local.get(Object.keys(DEFAULTS));
-  data.unlockedSites = cleanExpiredUnlocks(data.unlockedSites || {});
-  await chrome.storage.local.set({ unlockedSites: data.unlockedSites });
-  await syncRules(data.blockedSites || [], data.unlockedSites);
+  await syncRules();
 });
 
 // --- Message handling (unlock requests from blocked.js) ---
@@ -105,7 +108,7 @@ async function handleRemoveSite(domain) {
 
   await chrome.storage.local.set({ blockedSites: sites, unlockedSites });
   await chrome.alarms.clear(`reblock-${domain}`);
-  await syncRules(sites, unlockedSites);
+  await syncRules();
 }
 
 async function handleUnlock(domain) {
@@ -132,22 +135,8 @@ async function handleUnlock(domain) {
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (!alarm.name.startsWith("reblock-")) return;
-
-  const domain = alarm.name.slice("reblock-".length);
-
-  // Remove from unlockedSites
-  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
-  const unlockedSites = data.unlockedSites || {};
-  delete unlockedSites[domain];
-  await chrome.storage.local.set({ unlockedSites });
-
-  // Re-add blocking rule if the domain is still in the blocklist
-  const blockedSites = data.blockedSites || [];
-  if (blockedSites.includes(domain)) {
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      addRules: [buildRule(domain)],
-    });
-  }
+  // syncRules will clean expired unlocks and re-add all blocking rules
+  await syncRules();
 });
 
 // --- Storage change listener (re-sync when popup edits blockedSites) ---
@@ -156,6 +145,5 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area !== "local") return;
   if (!changes.blockedSites) return;
 
-  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
-  await syncRules(data.blockedSites || [], data.unlockedSites || {});
+  await syncRules();
 });
