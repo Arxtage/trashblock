@@ -18,6 +18,11 @@ function normalizeQuotes(str) {
     .replace(/[\u2013\u2014]/g, "-");
 }
 
+// Collapse all whitespace (newlines, tabs, non-breaking spaces, etc.) into single spaces
+function normalizeText(str) {
+  return str.replace(/\s+/g, " ").trim();
+}
+
 domainEl.textContent = site || "";
 
 // Adjust heading and instruction based on action
@@ -39,7 +44,7 @@ if (action === "remove") {
 
 // Load the unlock phrase from storage
 chrome.storage.local.get("unlockPhrase", (data) => {
-  unlockPhrase = normalizeQuotes(data.unlockPhrase || "");
+  unlockPhrase = normalizeText(normalizeQuotes(data.unlockPhrase || ""));
   phraseEl.textContent = unlockPhrase;
   renderFeedback();
 });

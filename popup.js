@@ -174,8 +174,13 @@ function normalizeQuotes(str) {
     .replace(/[\u2013\u2014]/g, "-");                // en/em dashes
 }
 
+// Collapse all whitespace (newlines, tabs, non-breaking spaces, etc.) into single spaces
+function normalizeText(str) {
+  return str.replace(/\s+/g, " ").trim();
+}
+
 savePhrase.addEventListener("click", () => {
-  const newPhrase = normalizeQuotes(phraseInput.value.trim());
+  const newPhrase = normalizeText(normalizeQuotes(phraseInput.value));
   if (!newPhrase) return;
 
   // Check if there's an existing phrase that requires confirmation
