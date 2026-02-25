@@ -173,3 +173,34 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
 
   await syncRules();
 });
+
+// --- webNavigation fallback (catches domains Arc's DNR misses) ---
+
+chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+  if (details.frameId !== 0) return;
+
+  const url = details.url;
+  if (url.startsWith("chrome") || url.startsWith("about")) return;
+
+  let hostname;
+  try { hostname = new URL(url).hostname; } catch { return; }
+
+  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites", "activeDays"]);
+  const blockedSites = data.blockedSites || [];
+  const unlockedSites = data.unlockedSites || {};
+  const activeDays = data.activeDays ?? [0, 1, 2, 3, 4, 5, 6];
+
+  if (!activeDays.includes(new Date().getDay())) return;
+
+  const domain = blockedSites.find(
+    (d) => hostname === d || hostname.endsWith("." + d)
+  );
+  if (!domain) return;
+
+  const expiry = unlockedSites[domain];
+  if (expiry && expiry > Date.now()) return;
+
+  const blockedUrl = chrome.runtime.getURL("blocked.html")
+    + "?site=" + encodeURIComponent(domain);
+  chrome.tabs.update(details.tabId, { url: blockedUrl });
+});
