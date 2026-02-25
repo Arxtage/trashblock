@@ -30,6 +30,11 @@ if (action === "remove") {
   domainEl.textContent = "";
   document.querySelector(".instruction").textContent =
     "Type your current phrase to confirm the change.";
+} else if (action === "changeDays") {
+  document.querySelector("h1").textContent = "Change Active Days";
+  domainEl.textContent = "";
+  document.querySelector(".instruction").textContent =
+    "Type your current phrase to confirm the schedule change.";
 }
 
 // Load the unlock phrase from storage
@@ -81,6 +86,18 @@ function checkMatch() {
       chrome.storage.local.set({ unlockPhrase: data.pendingPhrase }, () => {
         chrome.storage.local.remove("pendingPhrase", () => {
           statusEl.textContent = "Phrase updated! Closing tab...";
+          statusEl.className = "status success";
+          setTimeout(() => window.close(), 800);
+        });
+      });
+    });
+    return;
+  } else if (action === "changeDays") {
+    chrome.storage.local.get("pendingActiveDays", (data) => {
+      if (!data.pendingActiveDays) return;
+      chrome.storage.local.set({ activeDays: data.pendingActiveDays, daysConfigured: true }, () => {
+        chrome.storage.local.remove("pendingActiveDays", () => {
+          statusEl.textContent = "Schedule updated! Closing tab...";
           statusEl.className = "status success";
           setTimeout(() => window.close(), 800);
         });

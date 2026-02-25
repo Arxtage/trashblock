@@ -7,6 +7,9 @@ const siteList = document.getElementById("siteList");
 const emptyMsg = document.getElementById("emptyMsg");
 const unlockedList = document.getElementById("unlockedList");
 const unlockedEmpty = document.getElementById("unlockedEmpty");
+const daySelector = document.getElementById("daySelector");
+const dayButtons = daySelector.querySelectorAll(".day-btn");
+const dayStatus = document.getElementById("dayStatus");
 
 let countdownInterval = null;
 
@@ -22,14 +25,16 @@ function cleanDomain(input) {
 
 // Load and render all state
 function loadState() {
-  chrome.storage.local.get(["blockedSites", "unlockPhrase", "unlockedSites"], (data) => {
+  chrome.storage.local.get(["blockedSites", "unlockPhrase", "unlockedSites", "activeDays", "daysConfigured"], (data) => {
     const blockedSites = data.blockedSites || [];
     const unlockPhrase = data.unlockPhrase || "";
     const unlockedSites = data.unlockedSites || {};
+    const activeDays = data.activeDays ?? [0, 1, 2, 3, 4, 5, 6];
 
     phraseInput.value = unlockPhrase;
     renderBlockedSites(blockedSites);
     renderUnlockedSites(unlockedSites);
+    renderDaySelector(activeDays);
   });
 }
 
@@ -84,6 +89,50 @@ function renderUnlockedSites(unlockedSites) {
     countdownInterval = setInterval(updateCountdowns, 1000);
   }
 }
+
+function renderDaySelector(activeDays) {
+  for (const btn of dayButtons) {
+    const day = parseInt(btn.dataset.day, 10);
+    btn.classList.toggle("selected", activeDays.includes(day));
+  }
+}
+
+daySelector.addEventListener("click", (e) => {
+  const btn = e.target.closest(".day-btn");
+  if (!btn) return;
+
+  const clickedDay = parseInt(btn.dataset.day, 10);
+
+  chrome.storage.local.get(["activeDays", "daysConfigured", "unlockPhrase"], (data) => {
+    const activeDays = data.activeDays ?? [0, 1, 2, 3, 4, 5, 6];
+    const daysConfigured = data.daysConfigured || false;
+    const unlockPhrase = data.unlockPhrase || "";
+
+    // Toggle the clicked day
+    const idx = activeDays.indexOf(clickedDay);
+    const newDays = [...activeDays];
+    if (idx >= 0) {
+      newDays.splice(idx, 1);
+    } else {
+      newDays.push(clickedDay);
+    }
+
+    if (!daysConfigured || !unlockPhrase) {
+      // First-time or no phrase — save directly
+      chrome.storage.local.set({ activeDays: newDays, daysConfigured: true }, () => {
+        renderDaySelector(newDays);
+        dayStatus.textContent = "Saved!";
+        setTimeout(() => { dayStatus.textContent = ""; }, 2000);
+      });
+    } else {
+      // Require phrase challenge
+      chrome.storage.local.set({ pendingActiveDays: newDays }, () => {
+        const url = chrome.runtime.getURL("blocked.html") + "?action=changeDays";
+        chrome.tabs.create({ url });
+      });
+    }
+  });
+});
 
 function updateCountdowns() {
   const now = Date.now();

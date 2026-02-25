@@ -4,6 +4,8 @@ const DEFAULTS = {
   blockedSites: [],
   unlockPhrase: "I should be working on something productive",
   unlockedSites: {},
+  activeDays: [0, 1, 2, 3, 4, 5, 6], // all days active by default (Date.getDay())
+  daysConfigured: false,               // false = first-time, clicks save directly
 };
 
 // Stable hash of a domain string to a positive integer rule ID (1 – 1,000,000)
@@ -26,7 +28,7 @@ function buildRule(domain) {
       redirect: { url: blockedUrl },
     },
     condition: {
-      requestDomains: [domain],
+      urlFilter: "||" + domain + "^",
       resourceTypes: ["main_frame"],
     },
   };
@@ -35,26 +37,31 @@ function buildRule(domain) {
 // Full-replace all dynamic rules to match current blocked/unlocked state
 // Always cleans expired unlocks before syncing
 async function syncRules() {
-  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
+  const data = await chrome.storage.local.get(["blockedSites", "unlockedSites", "activeDays"]);
   const blockedSites = data.blockedSites || [];
   const unlockedSites = cleanExpiredUnlocks(data.unlockedSites || {});
+  const activeDays = data.activeDays ?? [0, 1, 2, 3, 4, 5, 6];
 
   // Persist cleaned unlocks
   await chrome.storage.local.set({ unlockedSites });
 
   const now = Date.now();
+  const today = new Date().getDay();
 
   // Remove all existing dynamic rules first
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const removeIds = existing.map((r) => r.id);
 
-  // Build rules for sites that are blocked and NOT currently unlocked
-  const addRules = blockedSites
-    .filter((domain) => {
-      const expiry = unlockedSites[domain];
-      return !expiry || expiry <= now;
-    })
-    .map(buildRule);
+  // If today is not an active day, add no blocking rules
+  let addRules = [];
+  if (activeDays.includes(today)) {
+    addRules = blockedSites
+      .filter((domain) => {
+        const expiry = unlockedSites[domain];
+        return !expiry || expiry <= now;
+      })
+      .map(buildRule);
+  }
 
   await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: removeIds,
@@ -74,6 +81,18 @@ function cleanExpiredUnlocks(unlockedSites) {
   return cleaned;
 }
 
+// --- Midnight alarm for day-based rule sync ---
+
+function scheduleMidnightAlarm() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 10, 0); // 00:00:10 tomorrow
+  chrome.alarms.create("midnight-sync", {
+    when: midnight.getTime(),
+    periodInMinutes: 24 * 60,
+  });
+}
+
 // --- Lifecycle events ---
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -81,10 +100,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   const merged = { ...DEFAULTS, ...data };
   await chrome.storage.local.set(merged);
   await syncRules();
+  scheduleMidnightAlarm();
 });
 
 chrome.runtime.onStartup.addListener(async () => {
   await syncRules();
+  scheduleMidnightAlarm();
 });
 
 // --- Message handling (unlock requests from blocked.js) ---
@@ -134,6 +155,11 @@ async function handleUnlock(domain) {
 // --- Alarm handling (re-block after unlock expires) ---
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === "midnight-sync") {
+    await syncRules();
+    scheduleMidnightAlarm(); // reschedule to handle DST shifts
+    return;
+  }
   if (!alarm.name.startsWith("reblock-")) return;
   // syncRules will clean expired unlocks and re-add all blocking rules
   await syncRules();
@@ -143,7 +169,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
 chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area !== "local") return;
-  if (!changes.blockedSites) return;
+  if (!changes.blockedSites && !changes.activeDays) return;
 
   await syncRules();
 });
