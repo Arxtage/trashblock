@@ -75,11 +75,18 @@ function checkMatch() {
   inputEl.disabled = true;
 
   if (action === "changePhrase") {
-    statusEl.textContent = "Phrase updated! Closing tab...";
-    statusEl.className = "status success";
-    chrome.runtime.sendMessage({ type: "applyPendingPhrase" }, () => {
-      setTimeout(() => window.close(), 800);
+    // Apply the pending phrase directly from storage
+    chrome.storage.local.get("pendingPhrase", (data) => {
+      if (!data.pendingPhrase) return;
+      chrome.storage.local.set({ unlockPhrase: data.pendingPhrase }, () => {
+        chrome.storage.local.remove("pendingPhrase", () => {
+          statusEl.textContent = "Phrase updated! Closing tab...";
+          statusEl.className = "status success";
+          setTimeout(() => window.close(), 800);
+        });
+      });
     });
+    return;
   } else if (action === "remove") {
     statusEl.textContent = "Removed! Closing tab...";
     statusEl.className = "status success";

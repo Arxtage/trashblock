@@ -1,4 +1,4 @@
-const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+const UNLOCK_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
 const DEFAULTS = {
   blockedSites: [],
@@ -95,19 +95,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     handleRemoveSite(message.domain).then(() => sendResponse({ ok: true }));
     return true;
   }
-  if (message.type === "applyPendingPhrase") {
-    handleApplyPendingPhrase().then(() => sendResponse({ ok: true }));
-    return true;
-  }
 });
-
-async function handleApplyPendingPhrase() {
-  const data = await chrome.storage.local.get("pendingPhrase");
-  if (data.pendingPhrase) {
-    await chrome.storage.local.set({ unlockPhrase: data.pendingPhrase });
-    await chrome.storage.local.remove("pendingPhrase");
-  }
-}
 
 async function handleRemoveSite(domain) {
   const data = await chrome.storage.local.get(["blockedSites", "unlockedSites"]);
