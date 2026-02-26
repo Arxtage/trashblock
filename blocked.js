@@ -69,7 +69,11 @@ function renderFeedback() {
       if (typed[i] === unlockPhrase[i]) {
         html += `<span class="correct">${escapeHtml(unlockPhrase[i])}</span>`;
       } else {
-        html += `<span class="incorrect">${escapeHtml(unlockPhrase[i])}</span>`;
+        if (unlockPhrase[i] === " ") {
+          html += `<span class="incorrect space-error">&middot;</span>`;
+        } else {
+          html += `<span class="incorrect">${escapeHtml(unlockPhrase[i])}</span>`;
+        }
       }
     } else {
       html += `<span class="remaining">${escapeHtml(unlockPhrase[i])}</span>`;

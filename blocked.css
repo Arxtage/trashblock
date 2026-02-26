@@ -92,6 +92,12 @@ h1 {
   text-decoration: underline;
 }
 
+.feedback .space-error {
+  background: rgba(233, 69, 96, 0.3);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
 .feedback .remaining {
   color: #555;
 }
