@@ -200,6 +200,12 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   const expiry = unlockedSites[domain];
   if (expiry && expiry > Date.now()) return;
 
+  // Guard: ensure the tab is still on the URL that triggered this event
+  try {
+    const tab = await chrome.tabs.get(details.tabId);
+    if (tab.url !== url && tab.pendingUrl !== url) return;
+  } catch { return; }
+
   const blockedUrl = chrome.runtime.getURL("blocked.html")
     + "?site=" + encodeURIComponent(domain);
   chrome.tabs.update(details.tabId, { url: blockedUrl });
