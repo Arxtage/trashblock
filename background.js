@@ -30,6 +30,7 @@ function buildRule(domain) {
     condition: {
       urlFilter: "||" + domain + "^",
       resourceTypes: ["main_frame"],
+      excludedInitiatorDomains: ["accounts.google.com"],
     },
   };
 }
@@ -204,6 +205,9 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   try {
     const tab = await chrome.tabs.get(details.tabId);
     if (tab.url !== url && tab.pendingUrl !== url) return;
+    // Skip blocking if this is a Google SSO redirect (cross-domain cookie setting)
+    const tabUrl = new URL(tab.url || "");
+    if (tabUrl.hostname === "accounts.google.com" || tabUrl.hostname.endsWith(".accounts.google.com")) return;
   } catch { return; }
 
   const blockedUrl = chrome.runtime.getURL("blocked.html")
