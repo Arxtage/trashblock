@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=440">
+  <title>Promo: Small Tile</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 440px; height: 280px;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Decorative accents */
+    .accent-top {
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(233, 69, 96, 0.15);
+    }
+    .accent-bottom {
+      position: absolute;
+      bottom: -30px; left: -30px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(78, 204, 163, 0.1);
+    }
+
+    .content {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon {
+      width: 56px; height: 56px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #e94560, #c73652);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    h1 span { color: #e94560; }
+
+    .tagline {
+      font-size: 0.95rem;
+      color: #888;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-top"></div>
+  <div class="accent-bottom"></div>
+  <div class="content">
+    <div class="icon">TB</div>
+    <h1>Trash<span>Block</span></h1>
+    <p class="tagline">Block distractions. Earn your breaks.</p>
+  </div>
+</body>
+</html>

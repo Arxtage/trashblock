@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Promo: Marquee</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1400px; height: 560px;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Decorative gradient accents */
+    .accent-1 {
+      position: absolute;
+      top: -100px; left: -100px;
+      width: 350px; height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(233, 69, 96, 0.12), transparent 70%);
+    }
+    .accent-2 {
+      position: absolute;
+      bottom: -120px; right: -60px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(78, 204, 163, 0.08), transparent 70%);
+    }
+    .accent-3 {
+      position: absolute;
+      top: 50%; right: 30%;
+      transform: translateY(-50%);
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(233, 69, 96, 0.06), transparent 70%);
+    }
+
+    .layout {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      padding: 0 100px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    .left {
+      flex: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(233, 69, 96, 0.15);
+      border: 1px solid rgba(233, 69, 96, 0.3);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      color: #e94560;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      color: #e0e0e0;
+      margin-bottom: 14px;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    h1 span { color: #e94560; }
+
+    .tagline {
+      font-size: 1.25rem;
+      color: #888;
+      line-height: 1.5;
+      max-width: 420px;
+    }
+
+    /* Stylized UI preview */
+    .preview-stack {
+      display: flex;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .card {
+      background: #16213e;
+      border-radius: 12px;
+      border: 1px solid #2a2a4a;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    /* Blocked page card */
+    .card-blocked {
+      width: 300px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .card-blocked h2 {
+      font-size: 1.6rem;
+      color: #e94560;
+      margin-bottom: 4px;
+    }
+    .card-blocked .cb-domain {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 16px;
+    }
+    .card-blocked .cb-phrase {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      color: #999;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .card-blocked .cb-input {
+      width: 100%;
+      background: #0f3460;
+      border: 2px solid #e94560;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      color: #e0e0e0;
+      text-align: left;
+    }
+    .cb-feedback {
+      margin-top: 8px;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+    .cb-feedback .correct { color: #4ecca3; }
+    .cb-feedback .remaining { color: #444; }
+
+    /* Popup card */
+    .card-popup {
+      width: 220px;
+      padding: 14px;
+    }
+    .card-popup h3 {
+      font-size: 1rem;
+      color: #e94560;
+      margin-bottom: 10px;
+    }
+    .card-popup .cp-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    .cp-days {
+      display: flex;
+      gap: 3px;
+    }
+    .cp-day {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      font-size: 7px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #333;
+      background: #1a1a2e;
+      color: #666;
+    }
+    .cp-day.on {
+      background: #e94560;
+      border-color: #e94560;
+      color: #fff;
+    }
+    .cp-sites {
+      list-style: none;
+      margin-top: 6px;
+    }
+    .cp-sites li {
+      background: #1a1a2e;
+      border-radius: 3px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      color: #bbb;
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-1"></div>
+  <div class="accent-2"></div>
+  <div class="accent-3"></div>
+  <div class="layout">
+    <div class="left">
+      <div class="badge">Chrome Extension</div>
+      <h1>Trash<span>Block</span></h1>
+      <p class="tagline">Block distracting websites with a typing challenge. Earn your breaks — don't just take them.</p>
+    </div>
+    <div class="preview-stack">
+      <div class="card card-blocked">
+        <h2>Blocked</h2>
+        <p class="cb-domain">twitter.com</p>
+        <div class="cb-phrase">I should be working on something productive</div>
+        <div class="cb-input">I should be work</div>
+        <div class="cb-feedback">
+          <span class="correct">I should be work</span><span class="remaining">ing on something productive</span>
+        </div>
+      </div>
+      <div class="card card-popup">
+        <h3>TrashBlock</h3>
+        <div class="cp-label">Active Days</div>
+        <div class="cp-days">
+          <div class="cp-day on">M</div>
+          <div class="cp-day on">T</div>
+          <div class="cp-day on">W</div>
+          <div class="cp-day on">T</div>
+          <div class="cp-day on">F</div>
+          <div class="cp-day">S</div>
+          <div class="cp-day">S</div>
+        </div>
+        <div class="cp-label">Blocked Sites</div>
+        <ul class="cp-sites">
+          <li>twitter.com</li>
+          <li>reddit.com</li>
+          <li>youtube.com</li>
+          <li>tiktok.com</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

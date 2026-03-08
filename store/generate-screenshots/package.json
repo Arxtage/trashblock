@@ -1,0 +1,10 @@
+{
+  "name": "trashblock-screenshots",
+  "private": true,
+  "scripts": {
+    "capture": "node capture.js"
+  },
+  "dependencies": {
+    "puppeteer": "^24.0.0"
+  }
+}

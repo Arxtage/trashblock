@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=920">
+  <title>Promo: Large Tile</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 920px; height: 680px;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Decorative accents */
+    .accent-1 {
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(233, 69, 96, 0.1);
+    }
+    .accent-2 {
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 250px; height: 250px;
+      border-radius: 50%;
+      background: rgba(78, 204, 163, 0.06);
+    }
+
+    .layout {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      padding: 0 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .left {
+      flex: 1;
+    }
+
+    .icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, #e94560, #c73652);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #e0e0e0;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    h1 span { color: #e94560; }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .features li {
+      font-size: 0.95rem;
+      color: #bbb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .features li .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ecca3;
+      flex-shrink: 0;
+    }
+
+    /* Mini blocked page preview */
+    .preview {
+      width: 320px;
+      flex-shrink: 0;
+      background: #16213e;
+      border-radius: 12px;
+      padding: 28px 24px;
+      text-align: center;
+      border: 1px solid #2a2a4a;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+    .preview h2 {
+      font-size: 1.5rem;
+      color: #e94560;
+      margin-bottom: 6px;
+    }
+    .preview .p-domain {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 18px;
+    }
+    .preview .p-phrase {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      color: #999;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .preview .p-input {
+      width: 100%;
+      background: #0f3460;
+      border: 2px solid #e94560;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      color: #4ecca3;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-1"></div>
+  <div class="accent-2"></div>
+  <div class="layout">
+    <div class="left">
+      <div class="icon">TB</div>
+      <h1>Trash<span>Block</span></h1>
+      <p class="tagline">Block distractions. Earn your breaks.<br>A typing challenge stands between you and your vices.</p>
+      <ul class="features">
+        <li><span class="dot"></span>Custom unlock phrases</li>
+        <li><span class="dot"></span>10-minute timed access</li>
+        <li><span class="dot"></span>Day-of-week scheduling</li>
+        <li><span class="dot"></span>100% offline &amp; private</li>
+      </ul>
+    </div>
+    <div class="preview">
+      <h2>Blocked</h2>
+      <p class="p-domain">twitter.com</p>
+      <div class="p-phrase">I should be working on something productive</div>
+      <div class="p-input">I should be work_</div>
+    </div>
+  </div>
+</body>
+</html>

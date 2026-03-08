@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>Screenshot: Blocked Page</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1280px; height: 800px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #e94560;
+      margin-bottom: 8px;
+    }
+    .domain {
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 32px;
+    }
+    .instruction {
+      font-size: 0.95rem;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+    .phrase {
+      background: #16213e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 1.15rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+      color: #ccc;
+      line-height: 1.6;
+      text-align: justify;
+    }
+    .input-mock {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1.1rem;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      background: #0f3460;
+      border: 2px solid #e94560;
+      border-radius: 8px;
+      color: #e0e0e0;
+      text-align: left;
+    }
+    .feedback {
+      margin-top: 16px;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 1.15rem;
+      letter-spacing: 0.3px;
+      min-height: 1.6em;
+      line-height: 1.6;
+      word-break: break-all;
+      text-align: justify;
+    }
+    .correct { color: #4ecca3; }
+    .incorrect { color: #e94560; text-decoration: underline; }
+    .remaining { color: #555; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Blocked</h1>
+    <p class="domain">twitter.com</p>
+    <p class="instruction">Type the phrase below exactly to unlock this site for 10 minutes.</p>
+    <div class="phrase">Your future self is watching you right now through memories. Make them proud. Do not let the noise of other peoples opinions drown out your own inner voice.</div>
+    <div class="input-mock">Your future self is watching you ri</div>
+    <div class="feedback">
+      <span class="correct">Your future self is watching you ri</span><span class="remaining">ght now through memories. Make them proud. Do not let the noise of other peoples opinions drown out your own inner voice.</span>
+    </div>
+  </div>
+</body>
+</html>
