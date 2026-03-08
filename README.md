@@ -53,14 +53,6 @@ TrashBlock is 100% offline and private:
 
 See the [privacy policy](https://arxtage.github.io/trashblock/privacy-policy.html).
 
-## Building
-
-To create a zip for Chrome Web Store submission:
-
-```bash
-zip -r trashblock.zip . -x ".git/*" "store/*" ".DS_Store" ".gitignore" "README.md"
-```
-
 ## License
 
 MIT
