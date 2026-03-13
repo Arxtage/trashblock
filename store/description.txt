@@ -1,11 +1,11 @@
 TrashBlock - Block Distracting Sites with a Typing Challenge
 
-Stop mindlessly opening distracting websites. TrashBlock makes you earn your distraction by typing a custom phrase before you can access blocked sites.
+Stop mindlessly opening distracting websites. TrashBlock lets you block the sites you choose and makes you manually type a custom phrase before a blocked site can be opened for 10 minutes.
 
 HOW IT WORKS
 
-1. Add any website to your block list (e.g., twitter.com, reddit.com, youtube.com)
-2. When you try to visit a blocked site, you'll see a full-page challenge
+1. Add any website domain to your block list (e.g., twitter.com, reddit.com, youtube.com, x.com)
+2. When you try to visit that domain or one of its subdomains, you'll see a full-page challenge instead of the site
 3. Type your unlock phrase exactly to get 10 minutes of access
 4. After 10 minutes, the site is blocked again automatically
 
@@ -19,22 +19,27 @@ KEY FEATURES
 
 - 10-minute unlock window: Successfully typing the phrase gives you 10 minutes of access, then blocks again automatically. Long enough to check something specific, short enough to prevent rabbit holes.
 
-- Subdomain blocking: Blocking "twitter.com" also blocks "mobile.twitter.com", "x.com" subdomains, and any other subdomains you add.
+- Domain + subdomain blocking: Blocking "twitter.com" also blocks "mobile.twitter.com" and other "*.twitter.com" subdomains. Separate domains like "x.com" should be added separately.
 
 - Full-page block screen: No tiny popups or notifications. A clean, focused challenge page that makes you think about whether you really need to visit the site.
 
-- Protected settings: Removing a site from the block list or changing your phrase requires completing the typing challenge. No quick toggles to disable in a moment of weakness.
+- Protected settings: Removing a site from the block list, changing your phrase, or changing active days requires completing the typing challenge. No quick toggles to disable in a moment of weakness.
+
+- Manual typing challenge: The unlock phrase must be typed exactly on the challenge page. Pasting is disabled.
 
 PRIVACY FIRST
 
-TrashBlock is 100% offline and private:
-- Zero data collection or transmission
+TrashBlock is private and local-first:
+- It checks page URLs locally to know when to show the block page
+- No browsing data or page content is sent anywhere
 - No analytics, no tracking, no third-party services
 - All settings stored locally on your device
 - Open source: https://github.com/Arxtage/trashblock
 
 PERMISSIONS EXPLAINED
 
-- "Read and change all your data on all websites" — This sounds scary but is required for any site-blocking extension. It's used solely to redirect blocked sites to the challenge page. No data is read or collected.
+- "Read and change all your data on all websites" / host access — Required because you can choose any site to block. TrashBlock only compares page URLs to your block list and redirects matching sites to the challenge page.
+
+- "Read your browsing history" / webNavigation — Used only to detect top-level navigation to a blocked site in rare fallback cases. TrashBlock does not build or transmit browsing history.
 
 Built for people who want a simple, honest tool to manage their attention — not another app that tracks you.

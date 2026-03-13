@@ -1,0 +1,12 @@
+1. Install the extension and click the TrashBlock toolbar icon.
+2. Add `example.com` or `reddit.com` to the blocked sites list.
+3. Open that site in a new tab.
+4. Expected result: TrashBlock shows a full-page typing challenge instead of the site.
+5. Type the displayed phrase exactly.
+6. Expected result: the site opens and stays unlocked for 10 minutes.
+7. Re-open the popup.
+8. Expected result: the site appears in the "Temporarily Unlocked" section with a countdown.
+9. Try removing a blocked site, changing the unlock phrase, or changing active days.
+10. Expected result: TrashBlock opens a challenge page and only applies the change after the current phrase is typed correctly.
+11. After 10 minutes, revisit the site.
+12. Expected result: the site is blocked again automatically.

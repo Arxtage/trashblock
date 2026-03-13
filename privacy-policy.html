@@ -33,16 +33,17 @@
 <body>
   <div class="container">
     <h1>TrashBlock - Privacy Policy</h1>
-    <p class="updated">Last updated: March 5, 2026</p>
+    <p class="updated">Last updated: March 13, 2026</p>
 
     <h2>Overview</h2>
-    <p>TrashBlock is a Chrome extension that blocks distracting websites by requiring a typing challenge to unlock them. It is designed to be completely private and offline.</p>
+    <p>TrashBlock is a Chrome extension that blocks distracting websites by requiring a typing challenge to unlock them. It works locally in your browser and does not send your data to external servers.</p>
 
     <h2>Data Collection</h2>
-    <p>TrashBlock does <strong>not</strong> collect, transmit, or share any data. Specifically:</p>
+    <p>TrashBlock does <strong>not</strong> collect or transmit personal data to the developer or third parties. To work, the extension locally checks page URLs against your block list inside the browser. Specifically:</p>
     <ul>
       <li>No personal information is collected</li>
-      <li>No browsing history is tracked or recorded</li>
+      <li>No browsing history is stored or sent off-device</li>
+      <li>No page content is collected or transmitted</li>
       <li>No analytics or telemetry of any kind</li>
       <li>No cookies are set</li>
       <li>No network requests are made to external servers</li>
@@ -58,8 +59,8 @@
       <li><strong>declarativeNetRequest</strong> - Used to redirect blocked sites to the challenge page</li>
       <li><strong>storage</strong> - Used to save your settings locally</li>
       <li><strong>alarms</strong> - Used to re-block sites after the temporary unlock expires</li>
-      <li><strong>webNavigation</strong> - Used as a fallback to detect navigation to blocked sites</li>
-      <li><strong>Host permissions (&lt;all_urls&gt;)</strong> - Required so the extension can block any site you add to your list. No data from these sites is collected or transmitted.</li>
+      <li><strong>webNavigation</strong> - Used as a fallback to detect navigation to blocked sites when redirect rules are not yet active</li>
+      <li><strong>Host permissions (&lt;all_urls&gt;)</strong> - Required so the extension can compare requested page URLs against your block list and block any site you choose. Page content is not collected or transmitted.</li>
     </ul>
 
     <h2>Changes to This Policy</h2>

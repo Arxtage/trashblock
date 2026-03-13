@@ -30,7 +30,6 @@ function buildRule(domain) {
     condition: {
       urlFilter: "||" + domain + "^",
       resourceTypes: ["main_frame"],
-      excludedInitiatorDomains: ["accounts.google.com"],
     },
   };
 }
@@ -147,7 +146,7 @@ async function handleUnlock(domain) {
     removeRuleIds: [domainToRuleId(domain)],
   });
 
-  // Set alarm to re-block after 5 minutes
+  // Set alarm to re-block after 10 minutes
   await chrome.alarms.create(`reblock-${domain}`, {
     when: expiry,
   });
@@ -175,7 +174,7 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
   await syncRules();
 });
 
-// --- webNavigation fallback (catches domains Arc's DNR misses) ---
+// --- webNavigation fallback (catches rare cases where DNR rules aren't active yet) ---
 
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   if (details.frameId !== 0) return;
@@ -205,9 +204,6 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   try {
     const tab = await chrome.tabs.get(details.tabId);
     if (tab.url !== url && tab.pendingUrl !== url) return;
-    // Skip blocking if this is a Google SSO redirect (cross-domain cookie setting)
-    const tabUrl = new URL(tab.url || "");
-    if (tabUrl.hostname === "accounts.google.com" || tabUrl.hostname.endsWith(".accounts.google.com")) return;
   } catch { return; }
 
   const blockedUrl = chrome.runtime.getURL("blocked.html")
