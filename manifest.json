@@ -3,7 +3,7 @@
   "name": "TrashBlock",
   "version": "1.0.1",
   "description": "Block distracting websites with a typing challenge to unlock.",
-  "homepage_url": "https://github.com/Arxtage/trashblock",
+  "homepage_url": "https://github.com/armantsaturian/trashblock",
   "permissions": [
     "declarativeNetRequest",
     "storage",

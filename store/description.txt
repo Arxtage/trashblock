@@ -34,7 +34,7 @@ TrashBlock is private and local-first:
 - No browsing data or page content is sent anywhere
 - No analytics, no tracking, no third-party services
 - All settings stored locally on your device
-- Open source: https://github.com/Arxtage/trashblock
+- Open source: https://github.com/armantsaturian/trashblock
 
 PERMISSIONS EXPLAINED
 

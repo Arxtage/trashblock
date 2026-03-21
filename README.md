@@ -52,7 +52,7 @@ TrashBlock is private and local-first:
 - All settings stored locally on your device
 - Open source
 
-See the [privacy policy](https://arxtage.github.io/trashblock/privacy-policy.html).
+See the [privacy policy](https://armantsaturian.github.io/trashblock/privacy-policy.html).
 
 ## License
 
